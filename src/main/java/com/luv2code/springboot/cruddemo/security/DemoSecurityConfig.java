@@ -5,38 +5,23 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
+import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+
+import javax.sql.DataSource;
 
 @Configuration
 public class DemoSecurityConfig {
 
+
+    //add support for JDBC ... no more hardcoded users  :-)
+
     @Bean
-    public InMemoryUserDetailsManager userDetailsManager(){  //InMemoryUserDetailsManager implements UserDetailsManager interface
+    public UserDetailsManager userDetailsManager(DataSource dataSource){
 
-        UserDetails john = User.builder()  //User implements UserDetails Interface
-                .username("john")
-                .password("{noop}test123")
-                .roles("EMPLOYEE")
-                .build();
-
-        UserDetails mary =User.builder()
-                .username("mary")
-                .password("{noop}test123")
-                .roles("EMPLOYEE","MANAGER")
-                .build();
-
-        UserDetails susan = User.builder()
-
-                    .username("susan")
-                    .password("{noop}test123")
-                    .roles("EMPLOYEE","MANAGER","ADMIN")
-                    .build();
-
-
-        return new InMemoryUserDetailsManager(john,mary,susan);
+        return new JdbcUserDetailsManager(dataSource);
     }
 
     @Bean
@@ -64,4 +49,33 @@ public class DemoSecurityConfig {
 
         return http.build();
     }
+
+     /* @Bean
+    public InMemoryUserDetailsManager userDetailsManager(){  //InMemoryUserDetailsManager implements UserDetailsManager interface
+
+        UserDetails john = User.builder()  //User implements UserDetails Interface
+                .username("john")
+                .password("{noop}test123")
+                .roles("EMPLOYEE")
+                .build();
+
+        UserDetails mary =User.builder()
+                .username("mary")
+                .password("{noop}test123")
+                .roles("EMPLOYEE","MANAGER")
+                .build();
+
+        UserDetails susan = User.builder()
+
+                    .username("susan")
+                    .password("{noop}test123")
+                    .roles("EMPLOYEE","MANAGER","ADMIN")
+                    .build();
+
+
+        return new InMemoryUserDetailsManager(john,mary,susan);
+    }
+*/
 }
+
+
